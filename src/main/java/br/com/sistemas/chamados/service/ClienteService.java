@@ -12,7 +12,7 @@ import br.com.sistemas.chamados.exception.RecursoNaoEncontradoException;
 import br.com.sistemas.chamados.exception.RegraNegocioException;
 import br.com.sistemas.chamados.repository.ClienteRepository;
 
-@Service 
+@Service
 public class ClienteService {
     
     private final ClienteRepository repository;
@@ -33,6 +33,11 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public List<ClienteResponse> listar() {
         return repository.findAll().stream().map(ClienteResponse::de).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ClienteResponse buscar(Long id) {
+        return ClienteResponse.de(buscarEntity(id));
     }
 
     @Transactional
