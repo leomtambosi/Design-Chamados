@@ -143,4 +143,16 @@ public class ChamadoService {
 
         chamadoRepository.delete(chamado);
     }
+
+    @Transactional(readOnly = true)
+    public List<ChamadoResponse> listarPorTecnico(Long tecnicoId) {
+        return chamadoRepository.findByTecnicoId(tecnicoId)
+                .stream().map(ChamadoResponse::de).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChamadoResponse> listarPorStatus(StatusChamado status) {
+        return chamadoRepository.findByStatus(status)
+                .stream().map(ChamadoResponse::de).toList();
+    }
 }

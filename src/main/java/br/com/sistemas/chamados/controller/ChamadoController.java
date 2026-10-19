@@ -11,6 +11,7 @@ import br.com.sistemas.chamados.dto.AlterarStatusRequest;
 import br.com.sistemas.chamados.dto.ChamadoRequest;
 import br.com.sistemas.chamados.dto.ChamadoResponse;
 import br.com.sistemas.chamados.service.ChamadoService;
+import br.com.sistemas.chamados.entity.StatusChamado;
 import jakarta.validation.Valid;
 
 @RestController
@@ -42,6 +43,16 @@ public class ChamadoController {
     @GetMapping("/{id}")
     public ChamadoResponse buscar(@PathVariable Long id) {
         return service.buscar(id);
+    }
+
+    @GetMapping(params = "tecnicoId")
+    public List<ChamadoResponse> listarPorTecnico(@RequestParam Long tecnicoId) {
+        return service.listarPorTecnico(tecnicoId);
+    }
+
+    @GetMapping(params = "status")
+    public List<ChamadoResponse> listarPorStatus(@RequestParam StatusChamado status) {
+        return service.listarPorStatus(status);
     }
 
     @PatchMapping("/{id}/atribuir")
