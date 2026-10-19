@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
+import br.com.sistemas.chamados.dto.ComentarioRequest;
+import br.com.sistemas.chamados.dto.ComentarioResponse;
 import br.com.sistemas.chamados.dto.AtribuirTecnicoRequest;
 import br.com.sistemas.chamados.dto.AlterarStatusRequest;
 import br.com.sistemas.chamados.dto.ChamadoRequest;
@@ -33,6 +36,15 @@ public class ChamadoController {
         return ResponseEntity
                 .created(URI.create("/chamados/" + criado.id()))
                 .body(criado);
+    }
+
+    @PostMapping("/{id}/comentarios")
+    public ResponseEntity<ComentarioResponse> adicionarComentario(
+            @PathVariable Long id,
+            @Valid @RequestBody ComentarioRequest dto) {
+
+        ComentarioResponse criado = service.adicionarComentario(id, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
     }
 
     @GetMapping

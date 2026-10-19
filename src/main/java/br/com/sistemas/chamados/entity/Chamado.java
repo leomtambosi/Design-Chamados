@@ -2,6 +2,8 @@ package br.com.sistemas.chamados.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "chamados")
@@ -41,6 +43,11 @@ public class Chamado {
     @ManyToOne
     @JoinColumn(name = "tecnico_id")
     private Tecnico tecnico;
+
+    @OneToMany(mappedBy = "chamado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios = new ArrayList<>();
+
+    public List<Comentario> getComentarios() { return comentarios; }
 
     public Chamado() {}
 
