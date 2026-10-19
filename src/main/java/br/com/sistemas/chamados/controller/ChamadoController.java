@@ -2,8 +2,12 @@ package br.com.sistemas.chamados.controller;
 
 import java.net.URI;
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import br.com.sistemas.chamados.dto.AtribuirTecnicoRequest;
+import br.com.sistemas.chamados.dto.AlterarStatusRequest;
 import br.com.sistemas.chamados.dto.ChamadoRequest;
 import br.com.sistemas.chamados.dto.ChamadoResponse;
 import br.com.sistemas.chamados.service.ChamadoService;
@@ -20,9 +24,14 @@ public class ChamadoController {
     }
 
     @PostMapping
-    public ResponseEntity<ChamadoResponse> criar(@Valid @RequestBody ChamadoRequest dto) {
+    public ResponseEntity<ChamadoResponse> criar(
+            @Valid @RequestBody ChamadoRequest dto) {
+
         ChamadoResponse criado = service.criar(dto);
-        return ResponseEntity.created(URI.create("/chamados/" + criado.id())).body(criado);
+
+        return ResponseEntity
+                .created(URI.create("/chamados/" + criado.id()))
+                .body(criado);
     }
 
     @GetMapping
@@ -35,9 +44,27 @@ public class ChamadoController {
         return service.buscar(id);
     }
 
+    @PatchMapping("/{id}/atribuir")
+    public ChamadoResponse atribuirTecnico(
+            @PathVariable Long id,
+            @Valid @RequestBody AtribuirTecnicoRequest dto) {
+
+        return service.atribuirTecnico(id, dto.tecnicoId());
+    }
+
+    @PatchMapping("/{id}/status")
+    public ChamadoResponse alterarStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody AlterarStatusRequest dto) {
+
+        return service.alterarStatus(id, dto.status());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
+
         service.excluir(id);
+
         return ResponseEntity.noContent().build();
     }
 }
