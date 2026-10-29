@@ -6,6 +6,7 @@ import br.com.sistemas.chamados.entity.StatusChamado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
 
     @Query("SELECT c.prioridade, COUNT(c) FROM Chamado c GROUP BY c.prioridade")
     List<Object[]> contarPorPrioridade();
+
+    Optional<Chamado> findByTitulo(String titulo);
 }
