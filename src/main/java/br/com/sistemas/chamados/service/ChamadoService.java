@@ -111,7 +111,7 @@ public class ChamadoService {
 
     @Transactional(readOnly = true)
     public List<ChamadoResponse> listarPorTecnico(Long tecnicoId) {
-        return chamadoRepository.findByTecnicoId(tecnicoId)
+        return chamadoRepository.findByTecnico_Id(tecnicoId)
                 .stream()
                 .map(ChamadoResponse::de)
                 .toList();
