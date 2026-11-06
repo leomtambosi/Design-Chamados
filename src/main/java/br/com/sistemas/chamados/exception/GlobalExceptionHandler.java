@@ -1,39 +1,40 @@
 package br.com.sistemas.chamados.exception;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RecursoNaoEncontradoException.class)
-    public ResponseEntity<ErroResposta> naoEncontrado(RecursoNaoEncontradoException ex) {
-        return montar(HttpStatus.NOT_FOUND, ex.getMessage(), List.of());
-    }
-
-    @ExceptionHandler(RegraNegocioException.class)
-    public ResponseEntity<ErroResposta> regraNegocio(RegraNegocioException ex) {
-        return montar(HttpStatus.CONFLICT, ex.getMessage(), List.of());
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErroResposta> handleRuntimeException(RuntimeException ex) {
+        ErroResposta erro = new ErroResposta(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroResposta> validacao(MethodArgumentNotValidException ex) {
-        List<String> detalhes = ex.getBindingResult().getFieldErrors().stream()
-            .map(e -> e.getField() + ": " + e.getDefaultMessage())
-            .toList();
-        return montar(HttpStatus.BAD_REQUEST, "Dados inválidos", detalhes);
+    public ResponseEntity<ErroResposta> handleValidationException(MethodArgumentNotValidException ex) {
+        String mensagens = ex.getBindingResult().getFieldErrors().stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        ErroResposta erro = new ErroResposta(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Erro de validação: " + mensagens
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
-    private ResponseEntity<ErroResposta> montar(
-        HttpStatus status, String erro, List<String> detalhes) {
-        return ResponseEntity.status(status)
-            .body(new ErroResposta(LocalDateTime.now(), status.value(), erro, detalhes));
-    }
+    public record ErroResposta(LocalDateTime momento, int status, String erro) {}
 }
-
