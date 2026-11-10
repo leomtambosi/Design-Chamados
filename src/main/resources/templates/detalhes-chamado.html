@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Chamado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard"><i class="fas fa-headset me-2"></i>Painel Chamados</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/chamados">Chamados</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2><i class="fas fa-ticket-alt me-2 text-primary"></i>Chamado #<span th:text="${chamado.id}">1</span></h2>
+            <a href="/chamados" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Voltar</a>
+        </div>
+
+        <div class="row">
+            <!-- Informações e Descrição -->
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="card-title fw-bold text-dark mb-3" th:text="${chamado.titulo}">Título</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Cliente:</strong> <span th:text="${chamado.clienteNome}">Cliente</span></div>
+                            <div class="col-md-4"><strong>Técnico:</strong> <span th:text="${chamado.tecnicoNome != null ? chamado.tecnicoNome : 'Não atribuído'}">Técnico</span></div>
+                            <div class="col-md-4"><strong>Categoria:</strong> <span th:text="${chamado.categoriaNome}">Categoria</span></div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4"><strong>Prioridade:</strong> <span class="badge bg-warning text-dark" th:text="${chamado.prioridade}">MEDIA</span></div>
+                            <div class="col-md-4"><strong>Status Atual:</strong> <span class="badge bg-primary" th:text="${chamado.status}">ABERTO</span></div>
+                            <div class="col-md-4"><strong>Abertura:</strong> <span th:text="${chamado.dataAbertura}">2026-11-10</span></div>
+                        </div>
+                        <hr>
+                        <h5 class="text-secondary">Descrição</h5>
+                        <p class="text-muted" th:text="${chamado.descricao}">Descrição...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caixa de Ações (Alterar Status) -->
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white fw-bold">
+                        <i class="fas fa-sliders-h me-1"></i> Alterar Status
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/chamados/{id}/alterar-status(id=${chamado.id})}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Novo Status:</label>
+                                <select class="form-select form-select-sm" name="status" required>
+                                    <option value="ABERTO">ABERTO</option>
+                                    <option value="EM_ATENDIMENTO">EM_ATENDIMENTO</option>
+                                    <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
+                                    <option value="FECHADO">FECHADO</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-check me-1"></i> Atualizar Status
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
