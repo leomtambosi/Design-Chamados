@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Collections;
+
 @Controller
 public class DashboardController {
 
@@ -21,8 +23,9 @@ public class DashboardController {
             DashboardDTO dto = dashboardService.obterDashboard();
             model.addAttribute("dashboard", dto);
         } catch (Exception e) {
-            // Caso o banco esteja vazio ou ocorra algum detalhe, passa um objeto vazio para não quebrar a tela
-            model.addAttribute("dashboard", new DashboardDTO());
+            // Se ocorrer algum erro ou o banco estiver vazio, passamos o DTO preenchido com valores zerados/vázios
+            DashboardDTO dtoVazio = new DashboardDTO(0L, Collections.emptyMap(), Collections.emptyMap());
+            model.addAttribute("dashboard", dtoVazio);
         }
         return "dashboard"; // Procura o arquivo dashboard.html na pasta templates
     }

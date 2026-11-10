@@ -2,18 +2,113 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Sistema de Chamados</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>Painel - Sistema de Chamados</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <div class="container mt-4">
-        <h1>Painel de Controle</h1>
-        <p>Total de Chamados: <strong th:text="${dashboard.totalChamados}">0</strong></p>
+<body class="bg-light">
+
+    <!-- Navbar de Navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard"><i class="fas fa-headset me-2"></i>Sistema Chamados</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/h2-console" target="_blank">H2 Console</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container">
         
-        <!-- Listagem dinâmica de entidades integradas -->
-        <ul class="list-group" th:each="chamado : ${dashboard.ultimosChamados}">
-            <li class="list-group-item" th:text="${chamado.titulo}">Título do Chamado</li>
-        </ul>
+        <!-- Cabeçalho -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <h2><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard Geral</h2>
+                <p class="text-muted">Visão geral do sistema e estatísticas de atendimento.</p>
+            </div>
+        </div>
+
+        <!-- Card de Estatística Principal -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-ticket-alt me-2"></i>Total de Chamados</h5>
+                        <p class="card-text display-4 fw-bold" th:text="${dashboard.totalChamados}">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabelas de Detalhamento por Status e Prioridade -->
+        <div class="row">
+            
+            <!-- Chamados por Status -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white fw-bold">
+                        <i class="fas fa-chart-pie me-2 text-secondary"></i>Chamados por Status
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th class="text-end">Quantidade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${dashboard.chamadosPorStatus != null and #maps.isEmpty(dashboard.chamadosPorStatus)}">
+                                    <td colspan="2" class="text-center text-muted">Nenhum dado registado.</td>
+                                </tr>
+                                <tr th:each="entry : ${dashboard.chamadosPorStatus}">
+                                    <td th:text="${entry.key}">ABERTO</td>
+                                    <td class="text-end fw-bold" th:text="${entry.value}">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chamados por Prioridade -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white fw-bold">
+                        <i class="fas fa-exclamation-triangle me-2 text-secondary"></i>Chamados por Prioridade
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Prioridade</th>
+                                    <th class="text-end">Quantidade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${dashboard.chamadosPorPrioridade != null and #maps.isEmpty(dashboard.chamadosPorPrioridade)}">
+                                    <td colspan="2" class="text-center text-muted">Nenhum dado registado.</td>
+                                </tr>
+                                <tr th:each="entry : ${dashboard.chamadosPorPrioridade}">
+                                    <td th:text="${entry.key}">ALTA</td>
+                                    <td class="text-end fw-bold" th:text="${entry.value}">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

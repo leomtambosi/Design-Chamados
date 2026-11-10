@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,29 +20,30 @@ public class DashboardService {
 
     @Transactional(readOnly = true)
     public DashboardDTO obterDashboard() {
-
         Map<String, Long> porStatus = new LinkedHashMap<>();
-
-        for (Object[] resultado : chamadoRepository.contarPorStatus()) {
-            porStatus.put(
-                resultado[0].toString(),
-                ((Number) resultado[1]).longValue()
-            );
+        List<Object[]> statusResults = chamadoRepository.contarPorStatus();
+        
+        if (statusResults != null) {
+            for (Object[] resultado : statusResults) {
+                if (resultado != null && resultado[0] != null && resultado[1] != null) {
+                    porStatus.put(resultado[0].toString(), ((Number) resultado[1]).longValue());
+                }
+            }
         }
 
         Map<String, Long> porPrioridade = new LinkedHashMap<>();
-
-        for (Object[] resultado : chamadoRepository.contarPorPrioridade()) {
-            porPrioridade.put(
-                resultado[0].toString(),
-                ((Number) resultado[1]).longValue()
-            );
+        List<Object[]> prioridadeResults = chamadoRepository.contarPorPrioridade();
+        
+        if (prioridadeResults != null) {
+            for (Object[] resultado : prioridadeResults) {
+                if (resultado != null && resultado[0] != null && resultado[1] != null) {
+                    porPrioridade.put(resultado[0].toString(), ((Number) resultado[1]).longValue());
+                }
+            }
         }
 
-        return new DashboardDTO(
-            chamadoRepository.count(),
-            porStatus,
-            porPrioridade
-        );
+        long total = chamadoRepository.count();
+
+        return new DashboardDTO(total, porStatus, porPrioridade);
     }
 }
