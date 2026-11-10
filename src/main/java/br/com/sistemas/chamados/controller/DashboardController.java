@@ -2,12 +2,11 @@ package br.com.sistemas.chamados.controller;
 
 import br.com.sistemas.chamados.dto.DashboardDTO;
 import br.com.sistemas.chamados.service.DashboardService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/dashboard")
+@Controller
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -16,8 +15,15 @@ public class DashboardController {
         this.dashboardService = dashboardService;
     }
 
-    @GetMapping
-    public DashboardDTO obterDashboard() {
-        return dashboardService.obterDashboard();
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        try {
+            DashboardDTO dto = dashboardService.obterDashboard();
+            model.addAttribute("dashboard", dto);
+        } catch (Exception e) {
+            // Caso o banco esteja vazio ou ocorra algum detalhe, passa um objeto vazio para não quebrar a tela
+            model.addAttribute("dashboard", new DashboardDTO());
+        }
+        return "dashboard"; // Procura o arquivo dashboard.html na pasta templates
     }
 }

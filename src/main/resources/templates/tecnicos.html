@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Técnicos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <h2>Lista de Técnicos</h2>
+        <a href="/chamados/dashboard" class="btn btn-secondary mb-3">Voltar ao Dashboard</a>
+        <table class="table table-striped bg-white shadow-sm">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Perfil</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="tec : ${tecnicos}">
+                    <td th:text="${tec.id}">1</td>
+                    <td th:text="${tec.nome}">Carlos Souza</td>
+                    <td th:text="${tec.email}">carlos@email.com</td>
+                    <td th:text="${tec.perfil}">TECNICO</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
