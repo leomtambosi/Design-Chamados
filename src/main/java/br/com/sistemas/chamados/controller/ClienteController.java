@@ -1,59 +1,68 @@
 package br.com.sistemas.chamados.controller;
 
-import java.net.URI;
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import br.com.sistemas.chamados.dto.ClienteRequest;
-import br.com.sistemas.chamados.dto.ClienteResponse;
 import br.com.sistemas.chamados.service.ClienteService;
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/clientes")
 public class ClienteController {
+
     private final ClienteService service;
 
     public ClienteController(ClienteService service) {
         this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<ClienteResponse> criar(
-        @Valid @RequestBody ClienteRequest dto) {
-        ClienteResponse criado = service.criar(dto);
-        return ResponseEntity.created(URI.create("/clientes/" + criado.id())).body(criado);
-    }
-
     @GetMapping
-    public List<ClienteResponse> listar() {
-        return service.listar();
+    public String listar(Model model) {
+        model.addAttribute("clientes", service.listar());
+        return "clientes";
     }
 
-    @GetMapping("/{id}")
-    public ClienteResponse buscar(@PathVariable Long id) {
-        return service.buscar(id);
+    @GetMapping("/novo")
+    public String formularioNovo(Model model) {
+        if (!model.containsAttribute("clienteRequest")) {
+            model.addAttribute("clienteRequest", new ClienteRequest("", "", ""));
+        }
+        return "cliente-form";
     }
 
-    @PutMapping("/{id}")
-    public ClienteResponse atualizar(
-        @PathVariable Long id,
-        @Valid @RequestBody ClienteRequest dto) {
-        return service.atualizar(id, dto);
+    @PostMapping("/salvar")
+    public String salvar(@Valid @ModelAttribute("clienteRequest") ClienteRequest dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "cliente-form";
+        }
+        service.criar(dto);
+        return "redirect:/clientes";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    @GetMapping("/editar/{id}")
+    public String formularioEditar(@PathVariable Long id, Model model) {
+        var cliente = service.buscar(id);
+        // Mapeia o response para o request correspondente para edição
+        ClienteRequest dto = new ClienteRequest(cliente.nome(), cliente.email(), cliente.telefone());
+        model.addAttribute("clienteRequest", dto);
+        model.addAttribute("clienteId", id);
+        return "cliente-form";
+    }
+
+    @PostMapping("/atualizar/{id}")
+    public String atualizar(@PathVariable Long id, @Valid @ModelAttribute("clienteRequest") ClienteRequest dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "cliente-form";
+        }
+        service.atualizar(id, dto);
+        return "redirect:/clientes";
+    }
+
+    @GetMapping("/excluir/{id}")
+    public String excluir(@PathVariable Long id) {
         service.excluir(id);
-        return ResponseEntity.noContent().build();
+        return "redirect:/clientes";
     }
 }

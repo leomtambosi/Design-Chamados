@@ -1,15 +1,14 @@
 package br.com.sistemas.chamados.controller;
 
-import java.net.URI;
-import java.util.List;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import br.com.sistemas.chamados.dto.CategoriaRequest;
-import br.com.sistemas.chamados.dto.CategoriaResponse;
 import br.com.sistemas.chamados.service.CategoriaService;
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/categorias")
 public class CategoriaController {
 
@@ -19,30 +18,50 @@ public class CategoriaController {
         this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<CategoriaResponse> criar(@Valid @RequestBody CategoriaRequest dto) {
-        CategoriaResponse criado = service.criar(dto);
-        return ResponseEntity.created(URI.create("/categorias/" + criado.id())).body(criado);
-    }
-
     @GetMapping
-    public List<CategoriaResponse> listar() {
-        return service.listar();
+    public String listar(Model model) {
+        model.addAttribute("categorias", service.listar());
+        return "categorias";
     }
 
-    @GetMapping("/{id}")
-    public CategoriaResponse buscar(@PathVariable Long id) {
-        return service.buscar(id);
+    @GetMapping("/novo")
+    public String formularioNovo(Model model) {
+        if (!model.containsAttribute("categoriaRequest")) {
+            model.addAttribute("categoriaRequest", new CategoriaRequest("", ""));
+        }
+        return "categoria-form";
     }
 
-    @PutMapping("/{id}")
-    public CategoriaResponse atualizar(@PathVariable Long id, @Valid @RequestBody CategoriaRequest dto) {
-        return service.atualizar(id, dto);
+    @PostMapping("/salvar")
+    public String salvar(@Valid @ModelAttribute("categoriaRequest") CategoriaRequest dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "categoria-form";
+        }
+        service.criar(dto);
+        return "redirect:/categorias";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+    @GetMapping("/editar/{id}")
+    public String formularioEditar(@PathVariable Long id, Model model) {
+        var categoria = service.buscar(id);
+        CategoriaRequest dto = new CategoriaRequest(categoria.nome(), categoria.descricao());
+        model.addAttribute("categoriaRequest", dto);
+        model.addAttribute("categoriaId", id);
+        return "categoria-form";
+    }
+
+    @PostMapping("/atualizar/{id}")
+    public String atualizar(@PathVariable Long id, @Valid @ModelAttribute("categoriaRequest") CategoriaRequest dto, BindingResult result) {
+        if (result.hasErrors()) {
+            return "categoria-form";
+        }
+        service.atualizar(id, dto);
+        return "redirect:/categorias";
+    }
+
+    @GetMapping("/excluir/{id}")
+    public String excluir(@PathVariable Long id) {
         service.excluir(id);
-        return ResponseEntity.noContent().build();
+        return "redirect:/categorias";
     }
 }

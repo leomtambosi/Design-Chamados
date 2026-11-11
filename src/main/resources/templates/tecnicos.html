@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Técnicos - Sistema de Chamados</title>
+    <title>Gestão de Técnicos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -10,54 +10,66 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/dashboard"><i class="fas fa-headset me-2"></i>Sistema Chamados</a>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard"><i class="fas fa-headset me-2"></i>Painel Chamados</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="/categorias">Categorias</a></li>
                     <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/tecnicos">Técnicos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/tecnicos">Técnicos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/chamados">Chamados</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comentarios">Comentários</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Conteúdo -->
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <h2><i class="fas fa-user-shield me-2 text-primary"></i>Equipa de Técnicos</h2>
-            </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2><i class="fas fa-user-shield me-2 text-primary"></i>Lista de Técnicos</h2>
+            <a href="/tecnicos/novo" class="btn btn-success btn-sm">
+                <i class="fas fa-plus me-1"></i> Novo Técnico
+            </a>
         </div>
 
         <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table table-striped align-middle">
-                    <thead>
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
                             <th>E-mail</th>
                             <th>Perfil</th>
+                            <th class="text-center">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:if="${tecnicos != null and #lists.isEmpty(tecnicos)}">
-                            <td colspan="4" class="text-center text-muted">Nenhum técnico registado.</td>
+                        <tr th:each="tecnico : ${tecnicos}">
+                            <td th:text="${tecnico.id}">1</td>
+                            <td th:text="${tecnico.nome}">Nome</td>
+                            <td th:text="${tecnico.email}">email@email.com</td>
+                            <td>
+                                <span class="badge bg-secondary" th:text="${tecnico.perfil}">TECNICO</span>
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{/tecnicos/editar/{id}(id=${tecnico.id})}" class="btn btn-warning btn-sm text-white me-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a th:href="@{/tecnicos/excluir/{id}(id=${tecnico.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
                         </tr>
-                        <tr th:each="tec : ${tecnicos}">
-                            <td th:text="${tec.id}">1</td>
-                            <td th:text="${tec.nome}">Carlos Souza</td>
-                            <td th:text="${tec.email}">carlos@email.com</td>
-                            <td th:text="${tec.perfil}">ADMIN</td>
+                        <tr th:if="${tecnicos == null or #lists.isEmpty(tecnicos)}">
+                            <td colspan="5" class="text-center text-muted py-4">Nenhum técnico registado.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
