@@ -1,72 +1,281 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Detalhes do Chamado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Chamado - Sistema de Chamados</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS & FontAwesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-light">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/dashboard"><i class="fas fa-headset me-2"></i>Painel Chamados</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/chamados">Chamados</a></li>
+    <style>
+        :root {
+            --bg-body: #f4f6f9;
+            --navbar-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: #1e293b;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            background-color: var(--navbar-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-icon {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            font-size: 0.92rem;
+            color: #cbd5e1 !important;
+            padding: 0.5rem 0.9rem !important;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Cards Gerais */
+        .card-modern {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        .card-header-modern {
+            background-color: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 1.1rem 1.4rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+
+        /* Badges Estilo Pílula Suave */
+        .badge-soft {
+            padding: 0.45em 0.85em;
+            border-radius: 50rem;
+            font-weight: 600;
+            font-size: 0.78rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-soft-primary { background-color: #dbeafe; color: #1e40af; }
+        .badge-soft-warning { background-color: #fef3c7; color: #92400e; }
+        .badge-soft-success { background-color: #dcfce7; color: #166534; }
+        .badge-soft-danger  { background-color: #fee2e2; color: #991b1b; }
+        .badge-soft-secondary { background-color: #f1f5f9; color: #475569; }
+
+        /* Meta Box / Detalhes */
+        .meta-item {
+            background-color: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Botões */
+        .btn-custom-back {
+            background-color: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #475569;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-back:hover {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar Completa -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/dashboard">
+                <span class="brand-icon me-2"><i class="fas fa-headset"></i></span>
+                Painel Chamados
+            </a>
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto gap-1 mt-2 mt-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/chamados"><i class="fas fa-ticket-alt me-1"></i> Chamados</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/clientes"><i class="fas fa-users me-1"></i> Clientes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/tecnicos"><i class="fas fa-user-cog me-1"></i> Técnicos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categorias"><i class="fas fa-tags me-1"></i> Categorias</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/comentarios"><i class="fas fa-comments me-1"></i> Comentários</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2><i class="fas fa-ticket-alt me-2 text-primary"></i>Chamado #<span th:text="${chamado.id}">1</span></h2>
-            <a href="/chamados" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i> Voltar</a>
+    <!-- Conteúdo Principal -->
+    <div class="container pb-5">
+        
+        <!-- Cabeçalho -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <div>
+                <h2 class="fw-bold mb-1 text-dark">
+                    <i class="fas fa-ticket-alt me-2 text-primary"></i>Chamado <span th:text="'#' + ${chamado.id}">#1</span>
+                </h2>
+                <p class="text-muted mb-0">Visualização detalhada das informações e controle de atendimento.</p>
+            </div>
+            <div>
+                <a href="/chamados" class="btn btn-custom-back shadow-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar à Lista
+                </a>
+            </div>
         </div>
 
-        <div class="row">
+        <div class="row g-4">
             <!-- Informações e Descrição -->
-            <div class="col-md-8">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h4 class="card-title fw-bold text-dark mb-3" th:text="${chamado.titulo}">Título</h4>
-                        <div class="row mb-3">
-                            <div class="col-md-4"><strong>Cliente:</strong> <span th:text="${chamado.clienteNome}">Cliente</span></div>
-                            <div class="col-md-4"><strong>Técnico:</strong> <span th:text="${chamado.tecnicoNome != null ? chamado.tecnicoNome : 'Não atribuído'}">Técnico</span></div>
-                            <div class="col-md-4"><strong>Categoria:</strong> <span th:text="${chamado.categoriaNome}">Categoria</span></div>
+            <div class="col-lg-8">
+                <div class="card card-modern shadow-sm h-100">
+                    <div class="card-body p-4 p-md-4">
+                        
+                        <!-- Título do Chamado -->
+                        <h3 class="fw-bold text-dark mb-4" th:text="${chamado.titulo}">Título do Chamado</h3>
+
+                        <!-- Grid de Metadados Principais -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="meta-item">
+                                    <span class="meta-label">Cliente</span>
+                                    <span class="meta-value" th:text="${chamado.clienteNome}">Cliente</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="meta-item">
+                                    <span class="meta-label">Técnico Responsável</span>
+                                    <span class="meta-value" th:text="${chamado.tecnicoNome != null and !chamado.tecnicoNome.isEmpty() ? chamado.tecnicoNome : 'Não atribuído'}">Técnico</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="meta-item">
+                                    <span class="meta-label">Categoria</span>
+                                    <span class="meta-value" th:text="${chamado.categoriaNome}">Categoria</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row mb-3">
-                            <div class="col-md-4"><strong>Prioridade:</strong> <span class="badge bg-warning text-dark" th:text="${chamado.prioridade}">MEDIA</span></div>
-                            <div class="col-md-4"><strong>Status Atual:</strong> <span class="badge bg-primary" th:text="${chamado.status}">ABERTO</span></div>
-                            <div class="col-md-4"><strong>Abertura:</strong> <span th:text="${chamado.dataAbertura}">2026-11-10</span></div>
+
+                        <!-- Grid de Status e Datas -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="meta-item">
+                                    <span class="meta-label">Prioridade</span>
+                                    <div class="mt-1">
+                                        <span class="badge-soft"
+                                              th:classappend="${#strings.containsIgnoreCase(chamado.prioridade, 'ALTA') or #strings.containsIgnoreCase(chamado.prioridade, 'URGENTE') ? 'badge-soft-danger' : 
+                                                              (#strings.containsIgnoreCase(chamado.prioridade, 'MEDIA') or #strings.containsIgnoreCase(chamado.prioridade, 'MÉDIA') ? 'badge-soft-warning' : 
+                                                              (#strings.containsIgnoreCase(chamado.prioridade, 'BAIXA') ? 'badge-soft-success' : 'badge-soft-secondary'))}"
+                                              th:text="${chamado.prioridade}">MEDIA</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="meta-item">
+                                    <span class="meta-label">Status Atual</span>
+                                    <div class="mt-1">
+                                        <span class="badge-soft"
+                                              th:classappend="${#strings.containsIgnoreCase(chamado.status, 'ABERTO') ? 'badge-soft-primary' : 
+                                                              (#strings.containsIgnoreCase(chamado.status, 'ANDAMENTO') ? 'badge-soft-warning' : 
+                                                              (#strings.containsIgnoreCase(chamado.status, 'FECHADO') or #strings.containsIgnoreCase(chamado.status, 'CONCLUIDO') ? 'badge-soft-success' : 'badge-soft-secondary'))}"
+                                              th:text="${chamado.status}">ABERTO</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="meta-item">
+                                    <span class="meta-label">Data de Abertura</span>
+                                    <span class="meta-value" th:text="${chamado.dataAbertura}">2026-11-10</span>
+                                </div>
+                            </div>
                         </div>
-                        <hr>
-                        <h5 class="text-secondary">Descrição</h5>
-                        <p class="text-muted" th:text="${chamado.descricao}">Descrição...</p>
+
+                        <hr class="text-muted opacity-25 my-4">
+
+                        <!-- Descrição Detalhada -->
+                        <div>
+                            <h5 class="fw-bold text-dark mb-2"><i class="fas fa-align-left me-2 text-secondary"></i>Descrição Detalhada</h5>
+                            <div class="p-3 bg-light rounded-3 border">
+                                <p class="text-secondary mb-0" style="white-space: pre-line;" th:text="${chamado.descricao}">Descrição...</p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
             <!-- Caixa de Ações (Alterar Status) -->
-            <div class="col-md-4">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-dark text-white fw-bold">
-                        <i class="fas fa-sliders-h me-1"></i> Alterar Status
+            <div class="col-lg-4">
+                <div class="card card-modern shadow-sm">
+                    <div class="card-header-modern d-flex align-items-center">
+                        <i class="fas fa-sliders-h me-2 text-primary"></i>
+                        <span>Alterar Status</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-4">
                         <form th:action="@{/chamados/{id}/alterar-status(id=${chamado.id})}" method="post">
                             <div class="mb-3">
-                                <label class="form-label small fw-bold">Novo Status:</label>
-                                <select class="form-select form-select-sm" name="status" required>
+                                <label class="form-label fw-bold small text-secondary">Selecione o Novo Status:</label>
+                                <select class="form-select" name="status" required>
                                     <option value="ABERTO">ABERTO</option>
                                     <option value="EM_ATENDIMENTO">EM_ATENDIMENTO</option>
                                     <option value="AGUARDANDO_CLIENTE">AGUARDANDO_CLIENTE</option>
                                     <option value="FECHADO">FECHADO</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold py-2 shadow-sm">
                                 <i class="fas fa-check me-1"></i> Atualizar Status
                             </button>
                         </form>
@@ -74,8 +283,10 @@
                 </div>
             </div>
         </div>
+
     </div>
 
+    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
